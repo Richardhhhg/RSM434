@@ -8,7 +8,7 @@ import requests
 from time import sleep
 
 s = requests.Session()
-s.headers.update({'X-API-key': 'YSW7JD5I'}) # API Key from YOUR RIT Client
+s.headers.update({'X-API-key': 'M2MIEWNY'}) # API Key from YOUR RIT Client
 
 def get_tick():
     resp = s.get('http://localhost:9999/v1/case')
@@ -76,7 +76,8 @@ def get_order_status(order_id):
 def main():
     
     MAX_EXPOSURE = 25000
-    QUANTITY = 500
+    QUANTITY = 750
+    OFFSET = 4
     order_type = 'LIMIT'
     
     
@@ -91,7 +92,7 @@ def main():
         # news = get_news()
         tickers = ['CNR', 'RY', 'AC']
         
-        if position != MAX_EXPOSURE:
+        if position < MAX_EXPOSURE:
             for i in range(len(tickers)):
                 best_bid_price, best_ask_price = get_bid_ask(tickers[i])
                 bid_ask_spread = best_ask_price - best_bid_price
@@ -99,14 +100,14 @@ def main():
                     resp = s.post('http://localhost:9999/v1/orders', params = {'ticker': tickers[i], 'type': order_type, 'quantity': QUANTITY, 'price': best_bid_price, 'action': 'BUY'})
                     resp = s.post('http://localhost:9999/v1/orders', params = {'ticker': tickers[i], 'type': order_type, 'quantity': QUANTITY, 'price': best_ask_price, 'action': 'SELL'})
 
-        # sleep(0.25)
+        sleep(0.03)
             
         for i in range(len(tickers)):
             ticker_position = get_position_ticker(i)
             if ticker_position < 0:
-                resp = s.post('http://localhost:9999/v1/orders', params = {'ticker': tickers[i], 'type': 'MARKET', 'quantity': abs(ticker_position), 'price': best_bid_price, 'action': 'BUY'})
+                resp = s.post('http://localhost:9999/v1/orders', params = {'ticker': tickers[i], 'type': 'MARKET', 'quantity': abs(ticker_position)/OFFSET, 'price': best_bid_price, 'action': 'BUY'})
             if ticker_position > 0:
-                resp = s.post('http://localhost:9999/v1/orders', params = {'ticker': tickers[i], 'type': 'MARKET', 'quantity': abs(ticker_position), 'price': best_ask_price, 'action': 'SELL'})
+                resp = s.post('http://localhost:9999/v1/orders', params = {'ticker': tickers[i], 'type': 'MARKET', 'quantity': abs(ticker_position)/OFFSET, 'price': best_ask_price, 'action': 'SELL'})
 
         # resp = s.post('http://localhost:9999/v1/commands/cancel', params = {'all': 1})
         
