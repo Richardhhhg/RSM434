@@ -8,7 +8,7 @@ import requests
 from time import sleep
 
 s = requests.Session()
-s.headers.update({'X-API-key': 'M2MIEWNY'}) # API Key from YOUR RIT Client
+s.headers.update({'X-API-key': 'YSW7JD5I'}) # API Key from YOUR RIT Client
 
 def get_tick():
     resp = s.get('http://localhost:9999/v1/case')
@@ -77,7 +77,7 @@ def main():
     
     MAX_EXPOSURE = 25000
     QUANTITY = 750
-    OFFSET = 4
+    OFFSET = 8
     order_type = 'LIMIT'
     
     
